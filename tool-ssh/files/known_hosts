@@ -1,0 +1,80 @@
+{#- adapted from https://github.com/saltstack-formulas/openssh-formula/blob/5fa1caab0b22e1e133fd9b859410a17f05a44a50/openssh/files/default/ssh_known_hosts -#}
+{#
+# vi:syntax=jinja
+#}
+
+{#- Generates one known_hosts entry per given key #}
+{%- macro known_host_entry(host, {}, keys, include_localhost, omit_ip_address) %}
+
+{#-   Get IPv4 and IPv6 addresses from the DNS #}
+{%-   if not ((omit_ip_address is sameas true) or (host in omit_ip_address)) %}
+{%-     set ip4 = salt['dig.A'](host) -%}
+{%-     set ip6 = salt['dig.AAAA'](host) -%}
+{%-   else %}
+{%-     set ip4 = [] -%}
+{%-     set ip6 = [] -%}
+{%-   endif %}
+
+{#-   The host names to use are to be found within the dict '{}'. #}
+{#-   If there are none, the host is used directly. #}
+{%-   set names = {}.get(host, host) -%}
+{%-   set names = [names] if names is string else names %}
+{%-   if include_localhost and host == grains['id'] %}
+{%-     do names.append('localhost') %}
+{%-     do names.append('127.0.0.1') %}
+{%-     do names.append('::1') %}
+{%-   endif -%}
+
+{#-   Extract the hostname from the FQDN and add it to the names. #}
+{%-   if use_hostnames is iterable -%}
+{%-     for name in names | sort -%}
+{%-       if salt["match.{}".format(hostnames_tgt_type)](hostnames_target, minion_id=name) -%}
+{%-         set hostname = name.split('.')|first -%}
+{%-         if hostname not in names -%}
+{%-           do names.append(hostname) -%}
+{%-         endif -%}
+{%-       endif -%}
+{%-     endfor -%}
+{%-   endif -%}
+
+{#-   Append IP addresses and aliases (if they are not already present) #}
+{%-   for ip in (ip4 + ip6)|sort -%}
+{%-     do names.append(ip) -%}
+{%-     for alias in aliases_ips.get(ip, []) -%}
+{%-       if alias not in names -%}
+{%-         do names.append(alias) -%}
+{%-       endif -%}
+{%-     endfor -%}
+{%-   endfor -%}
+
+{#-   Write one line per key; join the names together #}
+{%-   for line in keys.split('\n') -%}
+{%-     if line -%}
+{{        ','.join(names) }} {{ line }}
+{%      endif -%}
+{%-   endfor -%}
+{%- endmacro -%}
+
+{%- set use_hostnames = known_hosts | traverse('hostnames', False) -%}
+{%- set hostnames_target_default = '*' if grains['domain'] == '' else "*.{}".format(grains['domain']) -%}
+{%- set hostnames_target = known_hosts | traverse('hostnames:target', hostnames_target_default) -%}
+{%- set hostnames_tgt_type = known_hosts | traverse('hostnames:tgt_type', 'glob') -%}
+{%- set omit_ip_address = known_hosts | traverse('omit_ip_address', []) -%}
+
+{#- Lookup IP of all aliases so that when we have a matching IP, we inject the alias name
+    in the SSH known_hosts entry -#}
+{%- set aliases = known_hosts | traverse('aliases', []) -%}
+{%- set aliases_ips = {} -%}
+{%- for alias in aliases -%}
+  {%- for ip in salt['dig.A'](alias) + salt['dig.AAAA'](alias) -%}
+    {%- do aliases_ips.setdefault(ip, []).append(alias) -%}
+  {%- endfor -%}
+{%- endfor -%}
+
+{#- Static Pillar data #}
+{%- do host_keys.update(known_hosts | traverse('static', {})) -%}
+
+{#- Loop over targetted minions -#}
+{%- for host, keys in host_keys| dictsort -%}
+{{ known_host_entry(host, {}, keys, False, omit_ip_address) }}
+{%- endfor -%}

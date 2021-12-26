@@ -1,0 +1,6 @@
+{%- load_yaml as user_info -%}
+group: {{ salt['user.primary_group'](user.name) }}
+home: {{ salt['user.info'](user.name).home }}
+{%- endload -%}
+
+{%- set user = salt['defaults.merge'](user_info, user, in_place=False) -%}
