@@ -1,64 +1,77 @@
+# pillar layout is sadly a bit awkward and makes a bit more sense in the tool:users scope than in the tool:formula one
+# and with formulas that actually use some common tool functionality (like xdg dirs/env var setup etc)
+
 tool:
+  users:
+    user:
+      ssh:
+        config:
+          Hosts:
+            '*':
+              ForwardAgent: yes
+              ForwardX11: yes
   ssh:
-    - name: user
-      config:
-        Hosts:
-          '*':
-            AddressFamily: inet
-            HashKnownHosts: yes
-            VisualHostKey: yes
-            PasswordAuthentication: no
-            ChallengeResponseAuthentication: no
-            StrictHostKeyChecking: ask
-            VerifyHostKeyDNS: yes
-            ForwardAgent: no
-            ForwardX11: no
-            ForwardX11Trusted: no
-            ServerAliveInterval: 300
-            ServerAliveCountMax: 2
-            Ciphers:
-              - chacha20-poly1305@openssh.com
-              - aes256-gcm@openssh.com
-            MACs:
-              - hmac-sha2-512-etm@openssh.com
-              - hmac-sha2-256-etm@openssh.com
-            KexAlgorithms:
-              - curve25519-sha256@libssh.org
-              - diffie-hellman-group-exchange-sha256
-            HostKeyAlgorithms:
-              - ssh-ed25519-cert-v01@openssh.com
-              - ssh-rsa-cert-v01@openssh.com
-              - ssh-ed25519,ssh-rsa
-          mygit:
-            HostName: mygit.example.com
-            User: test
-            ControlMaster: auto
-            ControlPath: "~/.ssh/master-%r@%h:%p"
-            ControlPersist: 300
-        known_hosts:
-          # List of DNS entries also pointing to our known hosts and that we want
-          # to inject in our generated known_hosts file
-          aliases:
-            - alias.example.org
-          # Includes short hostnames derived from the FQDN
-          # (host.example.test -> host)
-          # (Deactivated by default, because there can be collisions!)
-          hostnames: false
-          # hostnames:
-          # Restrict wich hosts you want to use via their hostname
-          # (i.e. ssh user@host instead of ssh user@host.example.com)
-          #  target: '*'  # Defaults to "*.{{ grains['domain']}}"
-          #  tgt_type: 'glob'
-          # To activate the defaults you can just set an empty dict.
-          # hostnames: {}
-          # Here you can list keys for hosts which are not among your minions:
-          static:
-            github.com: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGm[...]'
-            gitlab.com: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bN[...]'
-          # Prevent an ever-changing ssh_known_hosts file caused by a domain which
-          # is served from multiple IP addresses.
-          # To disable completely:
-          # omit_ip_address: true
-          # Or to disable by specific hosts:
-          omit_ip_address:
-            - github.com
+    users:
+      user:
+        ssh:
+          config:
+            Hosts:
+              '*':
+                AddressFamily: inet
+                HashKnownHosts: yes
+                VisualHostKey: yes
+                PasswordAuthentication: no
+                ChallengeResponseAuthentication: no
+                StrictHostKeyChecking: ask
+                VerifyHostKeyDNS: yes
+                ForwardAgent: no
+                ForwardX11: no
+                ForwardX11Trusted: no
+                ServerAliveInterval: 300
+                ServerAliveCountMax: 2
+                Ciphers:
+                  - chacha20-poly1305@openssh.com
+                  - aes256-gcm@openssh.com
+                MACs:
+                  - hmac-sha2-512-etm@openssh.com
+                  - hmac-sha2-256-etm@openssh.com
+                KexAlgorithms:
+                  - curve25519-sha256@libssh.org
+                  - diffie-hellman-group-exchange-sha256
+                HostKeyAlgorithms:
+                  - ssh-ed25519-cert-v01@openssh.com
+                  - ssh-rsa-cert-v01@openssh.com
+                  - ssh-ed25519,ssh-rsa
+              mygit:
+                HostName: mygit.example.com
+                User: test
+                ControlMaster: auto
+                ControlPath: "~/.ssh/master-%r@%h:%p"
+                ControlPersist: 300
+          known_hosts:
+            # List of DNS entries also pointing to our known hosts and that we want
+            # to inject in our generated known_hosts file
+            aliases:
+              - alias.example.org
+            # Includes short hostnames derived from the FQDN
+            # (host.example.test -> host)
+            # (Deactivated by default, because there can be collisions!)
+            hostnames: false
+            # hostnames:
+            # Restrict wich hosts you want to use via their hostname
+            # (i.e. ssh user@host instead of ssh user@host.example.com)
+            #  target: '*'  # Defaults to "*.{{ grains['domain']}}"
+            #  tgt_type: 'glob'
+            # To activate the defaults you can just set an empty dict.
+            # hostnames: {}
+            # Here you can list keys for hosts which are not among your minions:
+            static:
+              github.com: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGm[...]'
+              gitlab.com: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bN[...]'
+            # Prevent an ever-changing ssh_known_hosts file caused by a domain which
+            # is served from multiple IP addresses.
+            # To disable completely:
+            # omit_ip_address: true
+            # Or to disable by specific hosts:
+            omit_ip_address:
+              - github.com

@@ -1,10 +1,10 @@
-{%- set users = salt['pillar.get']('tool:ssh') -%}
+{%- from 'tool-ssh/map.jinja' import ssh %}
 
 include:
   - .package
-{%- if users | selectattr('config') %}
+{%- if ssh.users | selectattr('ssh.config') %}
   - .config
 {%- endif %}
-{%- if users | selectattr('known_hosts') %}
-  - .config
+{%- if ssh.users | selectattr('ssh.known_hosts') %}
+  - .known_hosts
 {%- endif %}
