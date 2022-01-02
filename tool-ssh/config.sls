@@ -1,6 +1,6 @@
 {%- from 'tool-ssh/map.jinja' import ssh %}
 
-{%- for user in ssh.users | selectattr('ssh.config')) %}
+{%- for user in ssh.users | selectattr('ssh.config', 'defined')) %}
 SSH directory is present for user '{{ user.name }}':
   file.directory:
     - name: {{ user.home }}/.ssh

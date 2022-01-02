@@ -1,6 +1,6 @@
 {%- from 'tool-ssh/map.jinja' import ssh %}
 
-{%- if ssh.users | selectattr('config') %}
+{%- if ssh.users | selectattr('ssh.config', 'defined') %}
 include:
   - .config
 {%- endif %}

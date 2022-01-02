@@ -1,6 +1,6 @@
 {%- from 'tool-ssh/map.jinja' import ssh %}
 
-{%- for user in ssh.users | selectattr('ssh.known_hosts') %}
+{%- for user in ssh.users | selectattr('ssh.known_hosts', 'defined') %}
 SSH configuration is applied for user '{{ user.name }}':
   file.managed:
     - name: {{ user.home }}/.ssh/known_hosts
