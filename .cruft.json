@@ -1,0 +1,102 @@
+{
+  "template": "https://github.com/lkubb/salt-tool-template-formula",
+  "commit": "3b6808a48ad25f98745e748b6807028c7ec2d5d3",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "_extensions": [
+        "local_extensions.YAMLDumper"
+      ],
+      "_jinja2_env_vars": {
+        "block_start_string": "{!",
+        "block_end_string": "!}",
+        "variable_start_string": "{=",
+        "variable_end_string": "=}",
+        "comment_start_string": "{@",
+        "comment_end_string": "@}"
+      },
+      "name": "OpenSSH",
+      "abbr": "ssh",
+      "abbr_pysafe": "ssh",
+      "pkg": "openssh",
+      "modstate": "n",
+      "needs_repo": "n",
+      "has_service": "n",
+      "mac_library": "n",
+      "mac_cask": "n",
+      "has_xdg": "n",
+      "needs_xdg_help": "n",
+      "has_conffile_only": "n",
+      "default_confdir": ".ssh",
+      "default_confdir_mac": ".ssh",
+      "default_conffile": "config",
+      "xdg_dirname": "",
+      "xdg_conffile": "",
+      "has_configsync": "y",
+      "has_config_template": "y",
+      "has_tests": "y",
+      "git_username": "lkubb",
+      "_lookup": {},
+      "_settings": {},
+      "_usersettings": {
+        "config": {
+          "Hosts": {
+            "*": {
+              "AddressFamily": "inet",
+              "HashKnownHosts": "yes",
+              "VisualHostKey": "yes",
+              "PasswordAuthentication": "no",
+              "ChallengeResponseAuthentication": "no",
+              "StrictHostKeyChecking": "ask",
+              "VerifyHostKeyDNS": "yes",
+              "ForwardAgent": "no",
+              "ForwardX11": "no",
+              "ForwardX11Trusted": "no",
+              "ServerAliveInterval": 300,
+              "ServerAliveCountMax": 2,
+              "Ciphers": [
+                "chacha20-poly1305@openssh.com",
+                "aes256-gcm@openssh.com"
+              ],
+              "MACs": [
+                "hmac-sha2-512-etm@openssh.com",
+                "hmac-sha2-256-etm@openssh.com"
+              ],
+              "KexAlgorithms": [
+                "curve25519-sha256@libssh.org",
+                "diffie-hellman-group-exchange-sha256"
+              ],
+              "HostKeyAlgorithms": [
+                "ssh-ed25519-cert-v01@openssh.com",
+                "ssh-rsa-cert-v01@openssh.com",
+                "ssh-ed25519,ssh-rsa"
+              ]
+            },
+            "mygit": {
+              "HostName": "mygit.example.com",
+              "User": "test",
+              "ControlMaster": "auto",
+              "ControlPath": "~/.ssh/master-%r@%h:%p",
+              "ControlPersist": 300
+            }
+          }
+        },
+        "known_hosts": {
+          "aliases": [
+            "alias.example.org"
+          ],
+          "hostnames": false,
+          "static": {
+            "github.com": "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGm[...]",
+            "gitlab.com": "ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bN[...]"
+          },
+          "omit_ip_address": [
+            "github.com"
+          ]
+        }
+      },
+      "_template": "https://github.com/lkubb/salt-tool-template-formula"
+    }
+  },
+  "directory": null
+}

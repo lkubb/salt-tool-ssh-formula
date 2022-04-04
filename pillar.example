@@ -1,77 +1,185 @@
-# pillar layout is sadly a bit awkward and makes a bit more sense in the tool:users scope than in the tool:formula one
-# and with formulas that actually use some common tool functionality (like xdg dirs/env var setup etc)
+# -*- coding: utf-8 -*-
+# vim: ft=yaml
+# yamllint disable rule:comments-indentation
+---
+######################################################################
+# Mind that this is to be read as an overview of available
+# settings which can be set in many different ways, not only
+# by providing pillar values.
+# The different sources will be merged. For further information,
+# please see the docs, `libmapstack.jinja` as well as the configured
+# default sources in `parameters/map_jinja.yaml`.
+#
+# This documentation will need to be updated once there is
+# some learned experience. @TODO
+######################################################################
 
-tool:
+# Apart from the various source files, there are two independent source trees
+# for user-specific configuration.
+# Generally tool_ssh > tool_global.
+# `tool_global` focuses on specific users, of which most values
+# will be respected by all formulae in the `tool` suite:
+tool_global:
   users:
+
+      # The following is global configuration for the user named `user`.
     user:
+
+        # Sync this user's config from a dotfiles repo.
+        # The available paths and their priority can be found in the
+        # rendered `config/sync.sls` file (currently, @TODO docs).
+        # Overview in descending priority:
+        # salt://dotconfig/<minion_id>/<user>/
+        # salt://dotconfig/<minion_id>/
+        # salt://dotconfig/<os_family>/<user>/
+        # salt://dotconfig/<os_family>/
+        # salt://dotconfig/default/<user>/
+        # salt://dotconfig/default/
+      dotconfig:              # can be bool or mapping
+        file_mode: '0600'     # default: keep destination or salt umask (new)
+        dir_mode: '0700'      # default: 0700
+        clean: false          # delete files in target. default: false
+
+        # Persist environment variables used by this formula for this
+        # user to this file (will be appended to a file relative to $HOME)
+      persistenv: '.config/zsh/zshenv'
+
+        # Add runcom hooks specific to this formula to this file
+        # for this user (will be appended to a file relative to $HOME)
+      rchook: '.config/zsh/zshrc'
+
+        # This user's configuration for this formula. Will be overridden by
+        # user-specific configuration in `tool_ssh:users`.
+        # Set this to `false` to disable configuration for this user.
       ssh:
         config:
           Hosts:
             '*':
-              ForwardAgent: yes
-              ForwardX11: yes
-  ssh:
-    users:
-      user:
-        ssh:
-          config:
-            Hosts:
-              '*':
-                AddressFamily: inet
-                HashKnownHosts: yes
-                VisualHostKey: yes
-                PasswordAuthentication: no
-                ChallengeResponseAuthentication: no
-                StrictHostKeyChecking: ask
-                VerifyHostKeyDNS: yes
-                ForwardAgent: no
-                ForwardX11: no
-                ForwardX11Trusted: no
-                ServerAliveInterval: 300
-                ServerAliveCountMax: 2
-                Ciphers:
-                  - chacha20-poly1305@openssh.com
-                  - aes256-gcm@openssh.com
-                MACs:
-                  - hmac-sha2-512-etm@openssh.com
-                  - hmac-sha2-256-etm@openssh.com
-                KexAlgorithms:
-                  - curve25519-sha256@libssh.org
-                  - diffie-hellman-group-exchange-sha256
-                HostKeyAlgorithms:
-                  - ssh-ed25519-cert-v01@openssh.com
-                  - ssh-rsa-cert-v01@openssh.com
-                  - ssh-ed25519,ssh-rsa
-              mygit:
-                HostName: mygit.example.com
-                User: test
-                ControlMaster: auto
-                ControlPath: "~/.ssh/master-%r@%h:%p"
-                ControlPersist: 300
-          known_hosts:
+              AddressFamily: inet
+              ChallengeResponseAuthentication: 'no'
+              Ciphers:
+                - chacha20-poly1305@openssh.com
+                - aes256-gcm@openssh.com
+              ForwardAgent: 'no'
+              ForwardX11: 'no'
+              ForwardX11Trusted: 'no'
+              HashKnownHosts: 'yes'
+              HostKeyAlgorithms:
+                - ssh-ed25519-cert-v01@openssh.com
+                - ssh-rsa-cert-v01@openssh.com
+                - ssh-ed25519,ssh-rsa
+              KexAlgorithms:
+                - curve25519-sha256@libssh.org
+                - diffie-hellman-group-exchange-sha256
+              MACs:
+                - hmac-sha2-512-etm@openssh.com
+                - hmac-sha2-256-etm@openssh.com
+              PasswordAuthentication: 'no'
+              ServerAliveCountMax: 2
+              ServerAliveInterval: 300
+              StrictHostKeyChecking: ask
+              VerifyHostKeyDNS: 'yes'
+              VisualHostKey: 'yes'
+            mygit:
+              ControlMaster: auto
+              ControlPath: ~/.ssh/master-%r@%h:%p
+              ControlPersist: 300
+              HostName: mygit.example.com
+              User: test
+        known_hosts:
             # List of DNS entries also pointing to our known hosts and that we want
             # to inject in our generated known_hosts file
-            aliases:
-              - alias.example.org
+          aliases:
+            - alias.example.org
             # Includes short hostnames derived from the FQDN
             # (host.example.test -> host)
             # (Deactivated by default, because there can be collisions!)
-            hostnames: false
             # hostnames:
-            # Restrict wich hosts you want to use via their hostname
+            # Restrict which hosts you want to use via their hostname
             # (i.e. ssh user@host instead of ssh user@host.example.com)
             #  target: '*'  # Defaults to "*.{{ grains['domain']}}"
             #  tgt_type: 'glob'
             # To activate the defaults you can just set an empty dict.
             # hostnames: {}
-            # Here you can list keys for hosts which are not among your minions:
-            static:
-              github.com: 'ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGm[...]'
-              gitlab.com: 'ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bN[...]'
+          hostnames: false
             # Prevent an ever-changing ssh_known_hosts file caused by a domain which
             # is served from multiple IP addresses.
             # To disable completely:
             # omit_ip_address: true
             # Or to disable by specific hosts:
-            omit_ip_address:
-              - github.com
+          omit_ip_address:
+            - github.com
+            # Here you can list keys for hosts which are not among your minions:
+          static:
+            github.com: ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGm[...]
+            gitlab.com: ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCsj2bN[...]
+
+tool_ssh:
+
+    # Specify an explicit version (works on most Linux distributions) or
+    # keep the packages updated to their latest version on subsequent runs
+    # by leaving version empty or setting it to 'latest'
+    # (again for Linux, brew does that anyways).
+  version: latest
+
+    # Default formula configuration for all users.
+  defaults:
+    config: default value for all users
+
+    # User configuration can also be specified here in
+    # `tool_ssh:users`. It will override
+    # configuration sourced from `tool_global:users`.
+  users:
+    user:
+      persistenv: '.bash_profile'
+      ssh:
+        config: this overrides config from tool_globl:users
+
+######################################################################
+# The following settings define default values for this formula,
+# depending on different grains. You should not have to modify them
+# in most cases. For a full overview, see the different files
+# in `parameters`.
+######################################################################
+  lookup:
+    pkg:
+      name: openssh
+    rootgroup: root
+    paths:
+      confdir: '.ssh'
+      conffile: 'config'
+
+######################################################################
+# This is where `tool` suite settings end and Salt behavior settings
+# inherited from `salt-formulas/template-formula` start. They will
+# influence how exactly the TOFS pattern is applied. Mind that
+# parts of this are disabled for `configsync.sls`.
+######################################################################
+  tofs:
+    # The files_switch key serves as a selector for alternative
+    # directories under the formula files directory. See TOFS pattern
+    # doc for more info.
+    # Note: Any value not evaluated by `config.get` will be used literally.
+    # This can be used to set custom paths, as many levels deep as required.
+    files_switch:
+      - any/path/can/be/used/here
+      - id
+      - roles
+      - osfinger
+      - os
+      - os_family
+
+    # All aspects of path/file resolution are customisable using the options below.
+    # This is unnecessary in most cases; there are sensible defaults.
+    # Default path: salt://< path_prefix >/< dirs.files >/< dirs.default >
+    # I.e.: salt://tool_ssh/files/default
+    # path_prefix: template_alt
+    # dirs:
+    #   files: files_alt
+    #   default: default_alt
+    # The entries under `source_files` are prepended to the default source files
+    # given for the state
+    source_files:
+      OpenSSH config file is managed for user 'user':
+        - ''
+        - '.jinja'
