@@ -11,4 +11,8 @@
 OpenSSH config file is cleaned for user '{{ user.name }}':
   file.absent:
     - name: {{ user['_ssh'].conffile }}
+
+OpenSSH config dir is absent for user '{{ user.name }}':
+  file.absent:
+    - name: {{ user['_ssh'].confdir }}
 {%- endfor %}

@@ -34,12 +34,12 @@ The following shows an example of ``tool_ssh`` per-user configuration. If provid
       # The available paths and their priority can be found in the
       # rendered `config/sync.sls` file (currently, @TODO docs).
       # Overview in descending priority:
-      # salt://dotconfig/<minion_id>/<user>/
-      # salt://dotconfig/<minion_id>/
-      # salt://dotconfig/<os_family>/<user>/
-      # salt://dotconfig/<os_family>/
-      # salt://dotconfig/default/<user>/
-      # salt://dotconfig/default/
+      # salt://dotconfig/<minion_id>/<user>/ssh
+      # salt://dotconfig/<minion_id>/ssh
+      # salt://dotconfig/<os_family>/<user>/ssh
+      # salt://dotconfig/<os_family>/ssh
+      # salt://dotconfig/default/<user>/ssh
+      # salt://dotconfig/default/ssh
     dotconfig:              # can be bool or mapping
       file_mode: '0600'     # default: keep destination or salt umask (new)
       dir_mode: '0700'      # default: 0700
@@ -144,12 +144,12 @@ Dotfiles
 ~~~~~~~~
 ``tool_ssh.config.sync`` will recursively apply templates from
 
-* ``salt://dotconfig/<minion_id>/<user>/``
-* ``salt://dotconfig/<minion_id>/``
-* ``salt://dotconfig/<os_family>/<user>/``
-* ``salt://dotconfig/<os_family>/``
-* ``salt://dotconfig/default/<user>/``
-* ``salt://dotconfig/default/``
+* ``salt://dotconfig/<minion_id>/<user>/ssh``
+* ``salt://dotconfig/<minion_id>/ssh``
+* ``salt://dotconfig/<os_family>/<user>/ssh``
+* ``salt://dotconfig/<os_family>/ssh``
+* ``salt://dotconfig/default/<user>/ssh``
+* ``salt://dotconfig/default/ssh``
 
 to the user's config dir for every user that has it enabled (see ``user.dotconfig``). The target folder will not be cleaned by default (ie files in the target that are absent from the user's dotconfig will stay).
 

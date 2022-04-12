@@ -29,12 +29,12 @@ tool_global:
         # The available paths and their priority can be found in the
         # rendered `config/sync.sls` file (currently, @TODO docs).
         # Overview in descending priority:
-        # salt://dotconfig/<minion_id>/<user>/
-        # salt://dotconfig/<minion_id>/
-        # salt://dotconfig/<os_family>/<user>/
-        # salt://dotconfig/<os_family>/
-        # salt://dotconfig/default/<user>/
-        # salt://dotconfig/default/
+        # salt://dotconfig/<minion_id>/<user>/ssh
+        # salt://dotconfig/<minion_id>/ssh
+        # salt://dotconfig/<os_family>/<user>/ssh
+        # salt://dotconfig/<os_family>/ssh
+        # salt://dotconfig/default/<user>/ssh
+        # salt://dotconfig/default/ssh
       dotconfig:              # can be bool or mapping
         file_mode: '0600'     # default: keep destination or salt umask (new)
         dir_mode: '0700'      # default: 0700
@@ -181,5 +181,5 @@ tool_ssh:
     # given for the state
     source_files:
       OpenSSH config file is managed for user 'user':
-        - ''
-        - '.jinja'
+        - 'config'
+        - 'config.jinja'

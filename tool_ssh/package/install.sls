@@ -5,6 +5,7 @@
 {%- set tplroot = tpldir.split('/')[0] %}
 {%- from tplroot ~ "/map.jinja" import mapdata as ssh with context %}
 
+
 OpenSSH is installed:
   pkg.installed:
     - name: {{ ssh.lookup.pkg.name }}

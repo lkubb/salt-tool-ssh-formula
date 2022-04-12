@@ -17,7 +17,7 @@ OpenSSH config file is managed for user '{{ user.name }}':
   file.managed:
     - name: {{ user['_ssh'].conffile }}
     - source: {{ files_switch([ssh.lookup.paths.conffile],
-                              lookup='OpenSSH config file is managed for user \'{{ user.name }}\'',
+                              lookup="OpenSSH config file is managed for user '{}'".format(user.name),
                               opt_prefixes=[user.name])
               }}
     - mode: '0600'
