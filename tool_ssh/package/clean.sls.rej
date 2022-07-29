@@ -1,9 +1,9 @@
 diff a/tool_ssh/package/clean.sls b/tool_ssh/package/clean.sls	(rejected hunks)
-@@ -9,6 +9,7 @@
- include:
-   - {{ sls_config_clean }}
+@@ -1,7 +1,6 @@
+ # -*- coding: utf-8 -*-
+ # vim: ft=sls
  
-+
- OpenSSH is removed:
-   pkg.removed:
-     - name: {{ ssh.lookup.pkg.name }}
+-{#- Get the `tplroot` from `tpldir` #}
+ {%- set tplroot = tpldir.split('/')[0] %}
+ {%- set sls_config_clean = tplroot ~ '.config.clean' %}
+ {%- from tplroot ~ "/map.jinja" import mapdata as ssh with context %}
