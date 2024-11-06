@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # vim: ft=yaml
 ---
 tool_global:
@@ -65,6 +64,7 @@ tool_ssh:
     paths:
       confdir: '.ssh'
       conffile: 'config'
+    rootgroup: root
 
   tofs:
     # The files_switch key serves as a selector for alternative

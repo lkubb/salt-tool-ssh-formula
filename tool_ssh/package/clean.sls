@@ -1,9 +1,13 @@
-# -*- coding: utf-8 -*-
 # vim: ft=sls
 
-{%- set tplroot = tpldir.split('/')[0] %}
-{%- set sls_config_clean = tplroot ~ '.config.clean' %}
-{%- set sls_known_hosts_clean = tplroot ~ '.known_hosts.clean' %}
+{#-
+    Removes the OpenSSH package.
+    Has a dependency on `tool_ssh.config.clean`_.
+#}
+
+{%- set tplroot = tpldir.split("/")[0] %}
+{%- set sls_config_clean = tplroot ~ ".config.clean" %}
+{%- set sls_known_hosts_clean = tplroot ~ ".known_hosts.clean" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as ssh with context %}
 
 include:
