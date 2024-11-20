@@ -3,7 +3,7 @@
 {%- set tplroot = tpldir.split("/")[0] %}
 {%- set sls_package_install = tplroot ~ ".package.install" %}
 {%- from tplroot ~ "/map.jinja" import mapdata as ssh with context %}
-{%- from tplroot ~ "/libtofs.jinja" import files_switch %}
+{%- from tplroot ~ "/libtofsstack.jinja" import files_switch %}
 
 include:
   - {{ sls_package_install }}
@@ -14,9 +14,12 @@ include:
 OpenSSH known_hosts file is managed for user '{{ user.name }}':
   file.managed:
     - name: {{ user["_ssh"].confdir | path_join("known_hosts") }}
-    - source: {{ files_switch(["known_hosts"],
-                              lookup="OpenSSH known_hosts file is managed for user '{{ user.name }}'",
-                              opt_prefixes=[user.name])
+    - source: {{ files_switch(
+                    ["known_hosts"],
+                    lookup="OpenSSH known_hosts file is managed for user '{}'".format(user.name),
+                    config=ssh,
+                    custom_data={"users": [user.name]},
+                 )
               }}
     - mode: '0600'
     - user: {{ user.name }}

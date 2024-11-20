@@ -1,5 +1,5 @@
-Welcome to salt-tool-ssh-formula's documentation!
-=================================================
+Welcome to tool-ssh-formula's documentation!
+============================================
 
 .. toctree::
    :maxdepth: 2
